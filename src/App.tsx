@@ -1,5 +1,11 @@
+import Table from "./components/Table";
+
 function App() {
-  return <h1>Hello react app</h1>;
+  return (
+    <div className="flex justify-center items-center">
+      <Table />
+    </div>
+  );
 }
 
 export default App;
