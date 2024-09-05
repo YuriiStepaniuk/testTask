@@ -18,7 +18,8 @@ const SearchInput = ({
       type="text"
       ref={ref}
       onChange={handleChange}
-      className="border-2 rounded-md p-2 m-2"
+      className="border-2 rounded-md p-2 m-2 w-[280px]"
+      placeholder="Start typing here..."
     />
   );
 };
