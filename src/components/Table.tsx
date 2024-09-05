@@ -1,22 +1,16 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUsers, User } from "../store/slices/userSlice";
+
 import LoadingSpinner from "./UI/LoadingSpinner";
+import { RootState } from "../store/store";
 
-interface User {
-  id: number;
-  email: string;
-  name: string;
-  phone: string;
-  username: string;
-  website: string;
-  address: any;
-  company: any;
-}
-// {any} to avoid describing nested objects, since it`s not required for the task
+const Table = ({ column, query }: { column: string; query: string }) => {
+  // const [userData, setUserData] = useState<null | User[]>(null);
 
-const Table = () => {
-  const [userData, setUserData] = useState<null | User[]>(null);
-  const [isError, setIsError] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+  const dispatch = useDispatch();
+  const userData = useSelector((state: RootState) => state.users.users);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,18 +20,24 @@ const Table = () => {
           "https://jsonplaceholder.typicode.com/users"
         );
         const data = await response.json();
-        console.log(data);
 
-        setUserData(data);
+        dispatch(setUsers(data));
+
         setIsFetching(false);
       } catch (err) {
         console.error(err);
-        setIsError(true);
       }
     };
 
     fetchData();
-  }, []);
+  }, [dispatch]);
+
+  const filteredData = userData.filter((user) =>
+    user[column as keyof User]
+      .toString()
+      .toLowerCase()
+      .includes(query.toLowerCase())
+  );
 
   const tableCol = "px-4 py-2 border text-center";
 
@@ -55,7 +55,7 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {userData?.map((user) => (
+          {filteredData.map((user: User) => (
             <tr key={user.id} className="text-2xl bg-slate-400">
               <td className={tableCol}>{user.id}</td>
               <td className={tableCol}>{user.name}</td>
